@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t davingreg/test4:latest .'
+        sh 'docker build -t davingreg/test4:welcome .'
       }
     }
     stage('Login') {
