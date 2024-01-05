@@ -1,12 +1,8 @@
 pipeline {
     environment {
-        registry = "davingreg/test4"
-        registryCredential = 'dockerhub_id'
-        dockerImage = ''
+        DOCKERHUB_CREDENTIALS = credentials('davingreg-dockerhub')
     }
-    
     agent any
-
     stages {
         stage('Cloning Git Repository') {
             steps {
