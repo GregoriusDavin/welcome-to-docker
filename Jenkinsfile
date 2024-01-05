@@ -1,47 +1,31 @@
 pipeline {
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('davingreg-dockerhub')
+  agent any
+
+  environment {
+    DOCKERHUB_CREDENTIALS = credentials('davingreg-dockerhub')
+  }
+  
+  stages {
+    stage('Build') {
+      steps {
+        sh 'docker build -t davingreg/test4:latest .'
+      }
     }
-    agent any
-    stages {
-        stage('Cloning Git Repository') {
-            steps {
-                git 'https://github.com/GregoriusDavin/welcome-to-docker.git'
-            }
-        }
-
-        stage('Building Docker Image') {
-            steps {
-                script {
-                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
-                }
-            }
-        }
-
-        stage('Deploying Docker Image') {
-            steps {
-                script {
-                    docker.withRegistry('', registryCredential) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
-
-        stage('Cleaning up') {
-            steps {
-                sh "docker rmi ${registry}:${BUILD_NUMBER}"
-            }
-        }
+    stage('Login') {
+      steps {
+        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+      }
     }
-
-    post {
-        success {
-            echo 'Pipeline successfully completed. Image deployed and cleaned up.'
-        }
-
-        failure {
-            echo 'Pipeline failed. Please check the logs for details.'
-        }
+    stage('Push') {
+      steps {
+        sh 'docker push darinpope/test4:latest'
+      }
     }
+  }
+  
+  post {
+    always {
+      sh 'docker logout'
+    }
+  }
 }
