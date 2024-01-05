@@ -18,7 +18,7 @@ pipeline {
     }
     stage('Push') {
       steps {
-        sh 'docker push darinpope/test4:latest'
+        sh 'docker push davingreg/test4:welcome'
       }
     }
   }
